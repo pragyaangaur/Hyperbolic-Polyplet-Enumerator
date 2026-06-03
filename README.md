@@ -11,7 +11,7 @@ a(n): 1, 2, 10, 72, 710, 8026, 98353
 
 ## Implementation
 
-`polyplets_exact.py` is the current exact Coxeter-group enumerator.
+`Polyplets_Exact.py` is the current exact Coxeter-group enumerator.
 
 The exact backend models cells as cosets of the face stabilizer in the Coxeter group `[4,5]`, using matrices over `Q(sqrt(2), sqrt(5))`.  Coefficients are stored exactly as integer numerators over powers of two:
 
