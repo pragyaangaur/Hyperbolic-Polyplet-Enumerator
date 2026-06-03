@@ -1,11 +1,19 @@
 # Hyperbolic Polyplet Enumerator
 
-**Goal:** Extend OEIS A390200, the number of free $n$-celled polyplets in the $\\{4,5\\}$ tessellation of the hyperbolic plane. Polyplets are connected by edge or vertex adjacency; each square has 4 edge-neighbors and 8 vertex-neighbors.
+**Goal:** Extend [OEIS A390200](https://oeis.org/A390200), the number of free $n$-celled polyplets in the $\\{4,5\\}$ tessellation of the hyperbolic plane. Polyplets are connected by edge or vertex adjacency; each square has 4 edge-neighbors and 8 vertex-neighbors.
 
-**Known prefix (A390200), as checked on 2026-06-03:**  
+**Known Prefix (A390200), as checked on 2026-06-03:**  
 
 n:    1, 2, 3, 4, 5, 6, 7  
 a(n): 1, 2, 10, 72, 710, 8026, 98353
+
+## File Structure
+
+* **`Polyplets_Exact.py`** - The primary direct canonical expansion enumerator. Generates polyplets dynamically and canonicalizes their coordinate states against the face stabilizer.
+* **`Redelmeier-and-Burnside's-Lemma-Verifier.py`** - An independent enumeration engine utilizing a memory-safe graph spanning tree to generate fixed roots, mathematically computing the free count via the Orbit-Stabilizer theorem.
+* **`A119611-Verifier.py`** - A variant of the pipeline configured for strict edge-only connectivity to verify the algebraic core against an established sequence.
+* **`Coxeter-Verifier.py`** - A symbolic verification script using SymPy to test that the base matrix generators strictly satisfy the $[4,5]$ Coxeter group relations.
+* **`Output.json`** - Structured output data containing candidate counts, computational statistics, execution runtimes, and the verified extension data.
 
 ## Implementation & Methodology
 
