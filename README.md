@@ -1,11 +1,13 @@
 # Hyperbolic Polyplet Enumerator
 
-**Goal:** Extend [OEIS A390200](https://oeis.org/A390200), the number of free $n$-celled polyplets in the $\\{4,5\\}$ tessellation of the hyperbolic plane. Polyplets are connected by edge or vertex adjacency; each square has 4 edge-neighbors and 8 vertex-neighbors.
+**Status:** The exact algebraic extension computed by this repository was officially approved and added to [OEIS A390200](https://oeis.org/A390200) on June 3, 2026.
 
-**Known Prefix (A390200), as checked on 2026-06-03:**  
+**Goal:** Extend OEIS A390200, the number of free $n$-celled polyplets in the $\\{4,5\\}$ tessellation of the hyperbolic plane. Polyplets are connected by edge or vertex adjacency; each square has 4 edge-neighbors and 8 vertex-neighbors.
 
-n:    1, 2, 3, 4, 5, 6, 7  
-a(n): 1, 2, 10, 72, 710, 8026, 98353
+**Sequence Data (A390200):**  
+
+n:    1, 2, 3, 4, 5, 6, 7, 8  
+a(n): 1, 2, 10, 72, 710, 8026, 98353, 1261889
 
 ## File Structure
 
@@ -33,9 +35,9 @@ To guarantee correctness, the repository uses two mathematically distinct enumer
 
 To prove the algebraic engine, the neighbor generation logic was restricted to edge-only adjacency ($s_2$ reflections) and successfully reproduced the known prefix of **OEIS A119611** (Strict $\\{4,5\\}$ Polyominoes) perfectly up to $n=12$. The continuous geometric space is further verified symbolically via `Coxeter-Verifier.py`.
 
-## Status & Candidate Extension
+## Status & Approved Extension
 
-Both the direct canonicalizer and the Burnside enumerator reproduce the full known prefix and mathematically converge on the following candidate extension for $n=8$:
+Both the direct canonicalizer and the Burnside enumerator reproduce the full known prefix and mathematically converge on the extended term for $n=8$. This result has been officially approved and published by the OEIS.
 
 | $n$ | Count | Status | Candidates | Seconds |
 | :--- | :--- | :--- | :--- | :--- |
@@ -48,7 +50,7 @@ Both the direct canonicalizer and the Burnside enumerator reproduce the full kno
 | 7 | 98353 | ok | 337234 | 347.390 |
 | **8** | **1261889** | **new** | **4725668** | **6753.712** |
 
-**Candidate extension:**
+**Extended Term:**  
 $$a(8) = 1261889$$
 
 ## References
