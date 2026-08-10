@@ -9,6 +9,9 @@
 n:    1, 2, 3, 4, 5, 6, 7, 8  
 a(n): 1, 2, 10, 72, 710, 8026, 98353, 1261889
 
+<p align="center">
+<img src="a390200_growth.png" width="800">
+
 ## File Structure
 
 * **`Polyplets_Exact.py`** - The primary direct canonical expansion enumerator. Generates polyplets dynamically and canonicalizes their coordinate states against the face stabilizer.
