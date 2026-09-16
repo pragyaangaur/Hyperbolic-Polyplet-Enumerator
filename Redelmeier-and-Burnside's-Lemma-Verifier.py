@@ -21,7 +21,7 @@ KNOWN_A390200 = {
     5: 710,
     6: 8026,
     7: 98353,
-    # 8: 1261889
+    8: 1261889,
 }
 
 Alg = tuple[int, int, int, int, int]
@@ -196,47 +196,6 @@ class ExactBurnsideEnumerator:
         self.inverse_cache[target] = transforms
         return transforms
 
-    # ----------------------------------------------------------------------
-    # 1. Redelmeier Rooted Animal Generation
-    # ----------------------------------------------------------------------
-    def generate_rooted_animals(self, max_n: int) -> dict[int, list[frozenset[int]]]:
-        """
-        Generates all distinct, fixed-orientation connected polyplets containing 
-        the base cell. Returns a dictionary mapped by size n.
-        """
-        animals = {i: [] for i in range(1, max_n + 1)}
-        
-        def explore(shape_list: list[int], untried_list: list[int], forbidden_set: set[int]):
-            n = len(shape_list)
-            animals[n].append(frozenset(shape_list))
-            if n == max_n:
-                return
-            
-            for i, v in enumerate(untried_list):
-                new_shape = shape_list + [v]
-                
-                new_neighbors = []
-                for neighbor in self.neighbors(v):
-                    if neighbor > self.base and neighbor not in forbidden_set:
-                        new_neighbors.append(neighbor)
-                        forbidden_set.add(neighbor)
-                        
-                next_untried = untried_list[i + 1:] + new_neighbors
-                explore(new_shape, next_untried, forbidden_set)
-                
-                for neighbor in new_neighbors:
-                    forbidden_set.remove(neighbor)
-                    
-        print(f"Generating spanning tree for n={max_n}...")
-        initial_untried = [v for v in self.neighbors(self.base) if v > self.base]
-        initial_forbidden = set([self.base]) | set(initial_untried)
-        
-        explore([self.base], initial_untried, initial_forbidden)
-        return animals
-
-    # ----------------------------------------------------------------------
-    # 2. Burnside / Orbit-Stabilizer Evaluation
-    # ----------------------------------------------------------------------
     def shape_stabilizer_size(self, shape: frozenset[int]) -> int:
         """
         Tests the shape against all potential symmetries mapping back to itself.
@@ -255,49 +214,79 @@ class ExactBurnsideEnumerator:
                     sym_count += 1
         return sym_count
 
-    def calculate_free_counts(self, all_rooted: dict[int, list[frozenset[int]]]) -> dict[int, int]:
+    def count_rooted_animals(self, max_n: int) -> tuple[dict[int, int], dict[int, int]]:
         """
-        Applies Burnside's orbit-stabilizer theorem to analytically compress 
-        the rooted configurations into the final sequence of free shapes.
+        Generates every fixed polyplet containing the base cell with Redelmeier's method.
+        Each shape is scored as soon as it is generated and then discarded, so memory
+        use does not grow with the number of rooted shapes.
+        Returns (rooted_counts, stabilizer_sums), both keyed by n.
+        """
+        rooted_counts = {i: 0 for i in range(1, max_n + 1)}
+        stabilizer_sums = {i: 0 for i in range(1, max_n + 1)}
+
+        def explore(shape_list: list[int], untried_list: list[int], forbidden_set: set[int]):
+            n = len(shape_list)
+            rooted_counts[n] += 1
+            stabilizer_sums[n] += self.shape_stabilizer_size(frozenset(shape_list))
+            if n == max_n:
+                return
+
+            for i, v in enumerate(untried_list):
+                new_shape = shape_list + [v]
+
+                new_neighbors = []
+                for neighbor in self.neighbors(v):
+                    if neighbor > self.base and neighbor not in forbidden_set:
+                        new_neighbors.append(neighbor)
+                        forbidden_set.add(neighbor)
+
+                next_untried = untried_list[i + 1:] + new_neighbors
+                explore(new_shape, next_untried, forbidden_set)
+
+                for neighbor in new_neighbors:
+                    forbidden_set.remove(neighbor)
+
+        print(f"Generating rooted shapes up to n={max_n}...")
+        initial_untried = [v for v in self.neighbors(self.base) if v > self.base]
+        initial_forbidden = set([self.base]) | set(initial_untried)
+
+        explore([self.base], initial_untried, initial_forbidden)
+        return rooted_counts, stabilizer_sums
+
+    def calculate_free_counts(self, stabilizer_sums: dict[int, int]) -> dict[int, int]:
+        """
+        Applies the orbit-counting formula |F_n| = (1 / 8n) * sum of |Stab(A)| over rooted shapes A.
         """
         free_counts = {}
-        for n, rooted_shapes in all_rooted.items():
-            if n == 0: continue
-            print(f"Applying Burnside to {len(rooted_shapes)} rooted animals at n={n}...")
-            
-            total_sym = sum(self.shape_stabilizer_size(shape) for shape in rooted_shapes)
-            
+        for n, total_sym in stabilizer_sums.items():
             divisor = 8 * n
             assert total_sym % divisor == 0, f"Math error: {total_sym} not divisible by {divisor}"
             free_counts[n] = total_sym // divisor
-            
         return free_counts
+
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--max-n", type=int, default=7)
+    parser.add_argument("--max-n", type=int, default=8)
     args = parser.parse_args()
 
     enumerator = ExactBurnsideEnumerator()
-    
+
     start_time = perf_counter()
-    
-    rooted_shapes = enumerator.generate_rooted_animals(args.max_n)
-    generation_time = perf_counter() - start_time
-    
-    start_eval = perf_counter()
-    free_counts = enumerator.calculate_free_counts(rooted_shapes)
-    eval_time = perf_counter() - start_eval
+    rooted_counts, stabilizer_sums = enumerator.count_rooted_animals(args.max_n)
+    free_counts = enumerator.calculate_free_counts(stabilizer_sums)
+    elapsed = perf_counter() - start_time
 
     print("\n--- Final Sequence ---")
-    print("n,count,known,status")
+    print("n,count,known,status,rooted,stabilizer_sum")
     for n in range(1, args.max_n + 1):
         count = free_counts[n]
         known = KNOWN_A390200.get(n)
         status = "new" if known is None else ("ok" if known == count else "MISMATCH")
-        print(f"{n},{count},{known if known is not None else ''},{status}")
+        print(f"{n},{count},{known if known is not None else ''},{status},{rooted_counts[n]},{stabilizer_sums[n]}")
 
-    print(f"\nTime stats: Generation = {generation_time:.3f}s | Evaluation = {eval_time:.3f}s")
+    print(f"\nTime: {elapsed:.3f}s")
+
 
 if __name__ == "__main__":
     main()
