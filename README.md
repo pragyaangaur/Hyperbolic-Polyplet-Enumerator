@@ -15,7 +15,7 @@ a(n): 1, 2, 10, 72, 710, 8026, 98353, 1261889
 ## File Structure
 
 * **`Polyplets_Exact.py`** - The primary direct canonical expansion enumerator. Generates polyplets dynamically and canonicalizes their coordinate states against the face stabilizer.
-* **`Redelmeier-and-Burnside's-Lemma-Verifier.py`** - An independent enumeration engine utilizing a memory-safe graph spanning tree to generate fixed roots, mathematically computing the free count via the Orbit-Stabilizer theorem.
+* **`Redelmeier-and-Burnside's-Lemma-Verifier.py`** - A second enumerator. It generates rooted shapes with Redelmeier's method and computes the free count with the orbit-counting formula.
 * **`A119611-Verifier.py`** - A variant of the pipeline configured for strict edge-only connectivity to verify the algebraic core against an established sequence.
 * **`Coxeter-Verifier.py`** - A symbolic verification script using SymPy to test that the base matrix generators strictly satisfy the $[4,5]$ Coxeter group relations.
 * **`Output.json`** - Structured output data containing candidate counts, computational statistics, execution runtimes, and the verified extension data.
@@ -32,7 +32,7 @@ The local model rigorously checks:
 To guarantee correctness, the repository uses two mathematically distinct enumeration philosophies that corroborate each other:
 
 1. **Direct Canonicalization (`Polyplets_Exact.py`):** Expands the boundary dynamically and canonicalizes each finite connected set by translating every cell to the base cell and minimizing over the square stabilizer. 
-2. **Fixed Spanning Tree & Orbit-Stabilizer (`Burnside_Enumerator.py`):** Uses a Redelmeier-style lexicographical spanning tree to generate fixed, rooted animals, bypassing memory constraints. Burnside's Lemma (the Orbit-Stabilizer theorem) is then applied analytically to the symmetries of the exact Coxeter matrices to extract the free count.
+2. **Fixed Spanning Tree & Orbit-Stabilizer (`Redelmeier-and-Burnside's-Lemma-Verifier.py`):** Uses Redelmeier's method to generate every fixed polyplet that contains the base cell. Each shape is scored as soon as it is generated and is not stored, so memory use stays small. The free count comes from the orbit-counting formula $a(n) = \frac{1}{8n}\sum_A |\mathrm{Stab}(A)|$, where the sum runs over the rooted shapes $A$. The group $[4,5]$ is infinite, so this is not the classical Burnside lemma. The formula holds because the face stabilizer is finite.
 
 ## Verification
 
