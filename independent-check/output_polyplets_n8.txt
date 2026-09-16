@@ -1,0 +1,26 @@
+local model: 12 neighbor slots; cosh distances: 2.6180 2.6180 1.6180 2.6180 2.6180 1.6180 2.6180 2.6180 1.6180 2.6180 2.6180 1.6180
+layer 1: 12 cells
+layer 2: 48 cells
+layer 3: 180 cells
+layer 4: 672 cells
+layer 5: 2508 cells
+layer 6: 9360 cells
+layer 7: 34932 cells
+ball radius 7: 47713 cells; structural defects=0; worst D4-identification err=1.89e-06; worst same-cell |cosh-1|=1.85e-06; min distinct-cell cosh=1.6180
+grow n=1 free=1 rootedSum=8
+grow n=2 free=2 candidates=12 rooted(=sum 8n/|Stab|)=12
+grow n=3 free=10 candidates=35 rooted(=sum 8n/|Stab|)=150
+grow n=4 free=72 candidates=238 rooted(=sum 8n/|Stab|)=1972
+grow n=5 free=710 candidates=2150 rooted(=sum 8n/|Stab|)=26969
+grow n=6 free=8026 candidates=25540 rooted(=sum 8n/|Stab|)=380148
+grow n=7 free=98353 candidates=337234 rooted(=sum 8n/|Stab|)=5486292
+grow n=8 free=1261889 candidates=4725668 rooted(=sum 8n/|Stab|)=80680136
+redel: 1972 tasks, 8 threads
+redel n=1 rooted=1 free(minimal-root)=1 sumStab=8 sumStab/(8n)=1 rem=0
+redel n=2 rooted=12 free(minimal-root)=2 sumStab=32 sumStab/(8n)=2 rem=0
+redel n=3 rooted=150 free(minimal-root)=10 sumStab=240 sumStab/(8n)=10 rem=0
+redel n=4 rooted=1972 free(minimal-root)=72 sumStab=2304 sumStab/(8n)=72 rem=0
+redel n=5 rooted=26969 free(minimal-root)=710 sumStab=28400 sumStab/(8n)=710 rem=0
+redel n=6 rooted=380148 free(minimal-root)=8026 sumStab=385248 sumStab/(8n)=8026 rem=0
+redel n=7 rooted=5486292 free(minimal-root)=98353 sumStab=5507768 sumStab/(8n)=98353 rem=0
+redel n=8 rooted=80680136 free(minimal-root)=1261889 sumStab=80760896 sumStab/(8n)=1261889 rem=0

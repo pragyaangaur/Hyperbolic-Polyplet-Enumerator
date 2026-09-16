@@ -38,6 +38,24 @@ To guarantee correctness, the repository uses two mathematically distinct enumer
 
 To prove the algebraic engine, the neighbor generation logic was restricted to edge-only adjacency ($s_2$ reflections) and successfully reproduced the known prefix of **OEIS A119611** (Strict $\\{4,5\\}$ Polyominoes) perfectly up to $n=12$. The continuous geometric space is further verified symbolically via `Coxeter-Verifier.py`.
 
+### Independent check
+
+The folder `independent-check/` holds a C++ program, `enum45.cpp`, that recomputes the sequence without using any code or arithmetic from the Python scripts. It builds the tiling from hyperbolic isometries in the hyperboloid model and uses a different canonical form. It counts in two separate ways, and the file `output_polyplets_n8.txt` shows the full run.
+
+| $n$ | Free shapes (level by level) | Rooted shapes with minimal root | $\sum \|\mathrm{Stab}\| / 8n$ | Rooted shapes $\|R_n\|$ |
+| :--- | :--- | :--- | :--- | :--- |
+| 6 | 8026 | 8026 | 8026 | 380148 |
+| 7 | 98353 | 98353 | 98353 | 5486292 |
+| 8 | 1261889 | 1261889 | 1261889 | 80680136 |
+
+The numerical checks passed with a worst identification error of about $2 \times 10^{-6}$, while distinct cells differ by at least $0.618$. The same program with edge-only adjacency reproduces A119611 up to $n = 12$. The full $n = 8$ run takes about five minutes on an Apple M4.
+
+```bash
+clang++ -O3 -std=c++17 -o enum45 independent-check/enum45.cpp
+./enum45 plet both 8 8
+./enum45 omino redel 12 8
+```
+
 ## Status & Approved Extension
 
 Both the direct canonicalizer and the Burnside enumerator reproduce the full known prefix and mathematically converge on the extended term for $n=8$. This result has been officially approved and published by the OEIS.
